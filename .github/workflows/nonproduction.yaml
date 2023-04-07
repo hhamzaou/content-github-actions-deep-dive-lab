@@ -1,32 +1,32 @@
 name: Deploy feature branches to nonproduction bucket
 
 on:
-    push:
-        branches:
-            - features*
+  push:
+    branches:
+      - features*
 
 jobs:
-    build:
-        runs-on: ubuntu-latest
-        env:
-            BUCKET_NAME: cfst-3457-e613bea7c2fe8720a81ad13a4-nonprodbucket-pnkvefnluvjv
-        steps:
-            - name: checkout code
-              uses: actions/checkout@v2
-            - name: configure AWS CLI
-              uses: aws-actions/configure-aws-credentials@v1
-              with:
-                aws-region: us-east-1
-                aws-acces-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-                aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-            - name: set up node js
-              uses: actions/setup-node@v2
-              with:
-                node-version: 14
-            - name: build site
-              run: |
-                npm ci
-                npm run build
-            - name: deploy files to bucket
-              run: aws s3 cp public s3://${{ env.BUCKET_NAME }}/ --recursive --acl public-read   
+  build:
+    runs-on: ubuntu-latest
+    env:
+      BUCKET_NAME: cfst-3457-e613bea7c2fe8720a81ad13a4-nonprodbucket-pnkvefnluvjv
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v2
+      - name: configure AWS CLI
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-region: us-east-1
+          aws-acces-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      - name: set up node js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 14
+      - name: build site
+        run: |
+            npm ci
+            npm run build
+      - name: deploy files to bucket
+        run: aws s3 cp public s3://${{ env.BUCKET_NAME }} --recursive --acl public-read   
 
